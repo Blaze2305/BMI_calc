@@ -1,6 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'about.dart';
 
 class Home extends StatefulWidget {
+
+  static const routeName = '/';
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -16,6 +23,7 @@ class _HomeState extends State<Home> {
     'Imperial':"inches"
   };
   var data={};
+  var out={};
   var gender={
     0:"Male",
     1:"Female"
@@ -31,33 +39,34 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text("BMI Calc"),
         centerTitle: true,
-        leading: AppBar(
-          backgroundColor: Colors.blue[300],
-          elevation: 0,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.help_outline,
-                color: Colors.black,
-              ),
-              onPressed: ()=>debugPrint("ASDASd"),
-            )
-          ],
-        ),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              icon:Icon(
-                Icons.settings,
+              icon: Icon(
+                  Icons.person,
                 color: Colors.black,
-                semanticLabel: "Settings",
+                semanticLabel: "My Data",
               ),
-              onPressed: ()=>debugPrint("Button Pressed"),
-              tooltip: "Settings",
+              onPressed: ()=>debugPrint('Prev'),
+              tooltip: "My Data",
             ),
           )
         ],
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            icon:Icon(
+              Icons.help_outline,
+              color: Colors.black,
+              semanticLabel: "About",
+            ),
+            onPressed: (){
+              Navigator.pushNamed(context, About.routeName);
+            },
+            tooltip: "About",
+          ),
+        ),
         backgroundColor: Colors.blue[300],
       ),
       backgroundColor: Colors.black,
@@ -139,7 +148,9 @@ class _HomeState extends State<Home> {
                           ),
 
                       ),
-
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter.digitsOnly
+                      ],
                       validator: (value){
                         if(value.isEmpty){
                           data.remove('age');
@@ -149,83 +160,12 @@ class _HomeState extends State<Home> {
                         }
                         else{
                           setState(() {
-                            data['age']=value;
+                            data['age']=int.parse(value);
                           });
                           return null;
                         }
                       },
                       keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ),
-               //Unit
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "Units :  ",
-                          style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontSize: 22,
-                              color: Colors.white
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Theme(
-                            data: ThemeData(
-                              canvasColor: Colors.black
-                            ),
-                            child:DropdownButton<String>(
-                            value: dropDropValue,
-                            iconSize: 24,
-                            elevation: 10,
-                            style: TextStyle(
-                              color: Colors.white
-                            ),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.deepPurpleAccent,
-                            ),
-                            icon: Icon(
-                                Icons.arrow_downward,
-                                color: Colors.white,
-                            ),
-                            items: [
-                              DropdownMenuItem<String>(
-                                value: "Metric",
-                                child: Text(
-                                  "Metric",
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 20
-                                  ),
-                                ),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: "Imperial",
-                                child: Container(
-                                  child: Text(
-                                    "Imperial",
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 20,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                            onChanged: (value){
-                              setState(() {
-                                dropDropValue=value;
-                              });
-                            },
-                          ),
-                          )
-                        ),
-                      ],
                     ),
                   ),
                 ),
@@ -253,7 +193,6 @@ class _HomeState extends State<Home> {
                             color: Colors.blue,
                           ),
                         ),
-
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(
@@ -288,7 +227,6 @@ class _HomeState extends State<Home> {
                         ),
 
                       ),
-
                       validator: (value){
                         if(value.isEmpty){
                           data.remove('weight');
@@ -297,12 +235,12 @@ class _HomeState extends State<Home> {
                           return "Weight cannot be 0 or less";
                         }else{
                           setState(() {
-                            data['weight']=value;
+                            data['weight']=double.parse(value);
                           });
                           return null;
                         }
                       },
-                      keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.number
                     ),
                   ),
                 ),
@@ -365,7 +303,6 @@ class _HomeState extends State<Home> {
                         ),
 
                       ),
-
                       validator: (value){
                         if(value.isEmpty){
                           data.remove('height');
@@ -375,7 +312,7 @@ class _HomeState extends State<Home> {
                         }
                         else{
                           setState(() {
-                            data['height']=value;
+                            data['height']=double.parse(value);
                           });
                           return null;
                         }
@@ -445,7 +382,10 @@ class _HomeState extends State<Home> {
                     children: <Widget>[
                       RaisedButton(
                         color: Colors.green[400],
-                        onPressed: calculateBmi,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        onPressed: setValues,
                         child: Text(
                             "Submit",
                           style: TextStyle(
@@ -453,28 +393,11 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.w700
                           ),
                         ),
+                        padding: EdgeInsets.all(6),
                       )
                     ],
                   ),
                 ),
-
-                Container(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                            "FIRST SCREEN"
-                        ),
-                        FlatButton(
-                          child: Text(
-                              "Go to second screen"
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/alert');
-                          },
-                        )
-                      ],
-                    )
-                )
               ],
             ),
           )
@@ -483,9 +406,13 @@ class _HomeState extends State<Home> {
     );
   }
 
-  calculateBmi() {
+  setValues() {
     if(_formKey.currentState.validate() && data.keys.contains('sex')){
       debugPrint(data.toString());
+      calculateBMI();
+      calculateBMR();
+      calculateLeanBodyMass();
+      debugPrint(out.toString());
     }else{
       var errorList =[];
       ['age','sex','height','weight'].forEach((value){
@@ -498,11 +425,47 @@ class _HomeState extends State<Home> {
     }
   }
 
+//
+//BMI	Weight Status
+//Below 18.5	Underweight
+//18.5 – 24.9	Normal
+//25.0 – 29.9	Overweight
+//30.0 and Above	Obese
+
+  calculateBMI(){
+      out['BMI']=(data['weight'])/(pow(data['height'],2));
+  }
+
+//  LBM (men) = 0.407 * weight [kg] + 0.267 * height [cm] - 19.2
+//
+//LBM (women) = 0.252 * weight [kg] + 0.473 * height [cm] - 48.3
+
+  calculateLeanBodyMass(){
+      if(data['sex']=='Male'){
+        out['LBM']=0.407 * data['weight']+0.267*data['height']*100-19.2;
+      }else{
+        out['LBM']=0.252 * data['weight']+0.473*data['height']*100-48.3;
+      }
+  }
+
+//  BMR (kcal / day) = 10 * weight (kg) + 6.25 * height (cm) – 5 * age (y) + s (kcal / day),
+//
+//where s is +5 for males and -161 for females.
+
+  calculateBMR(){
+    if(data['sex']=="Male"){
+      out["BMR"]=10*data['weight']+6.25*data['height']*100-5*data['age']+5;
+    }else{
+      out["BMR"]=10*data['weight']+6.25*data['height']*100-5*data['age']-161;
+    }
+  }
+
+
   showAlertDialog(BuildContext context,errors) {
-    String mesg='The incomplete/wrong fields are:';
+    String msg='Incomplete/wrong fields :';
 
     errors.forEach((value){
-      mesg+="\n   -${value[0].toUpperCase()+value.substring(1)}";
+      msg+="\n   -${value[0].toUpperCase()+value.substring(1)}";
     });
     // set up the button
     Widget okButton = Center(
@@ -523,7 +486,7 @@ class _HomeState extends State<Home> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("My title"),
-      content: Text(mesg),
+      content: Text(msg),
       actions: [
         okButton,
       ],
@@ -538,28 +501,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-
 }
 
 
-
-class SecondScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Second Screen"),
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            // Navigate back to first screen when tapped.
-            Navigator.of(context).pop();
-          },
-          child: Text('Go back!'),
-        ),
-      ),
-    );
-  }
-}
 

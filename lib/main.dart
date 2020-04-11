@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'ui/about.dart';
 import 'ui/home.dart';
 
 void main(){
@@ -7,8 +7,8 @@ void main(){
     title: "BMI",
     initialRoute: '/',
     routes: {
-      '/':(context)=>Home(),
-      '/alert':(context)=>SecondScreen()
+      Home.routeName:(context)=>Home(),
+      About.routeName :(context)=>About(),
     },
   ));
 }
