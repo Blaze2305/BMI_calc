@@ -123,6 +123,7 @@ class _HomeState extends State<Home> {
 
                         errorStyle: TextStyle(
                           height: 0,
+                          fontSize: 15
                         ),
 
                           labelText: "Age",
@@ -140,10 +141,13 @@ class _HomeState extends State<Home> {
                       ),
 
                       validator: (value){
-                        if(value.isEmpty || int.tryParse(value)<=0){
+                        if(value.isEmpty){
                           data.remove('age');
-                          return "";
-                        }else{
+                          return "Age is required";
+                        }else if(int.tryParse(value)<=0){
+                          return "Age cannot be 0 or less";
+                        }
+                        else{
                           setState(() {
                             data['age']=value;
                           });
@@ -268,6 +272,7 @@ class _HomeState extends State<Home> {
 
                         errorStyle: TextStyle(
                           height: 0,
+                          fontSize: 15
                         ),
 
                         labelText: "Weight in ${weights[dropDropValue]}",
@@ -285,9 +290,11 @@ class _HomeState extends State<Home> {
                       ),
 
                       validator: (value){
-                        if(value.isEmpty || double.tryParse(value)<=0){
+                        if(value.isEmpty){
                           data.remove('weight');
-                          return "";
+                          return "Weight is required";
+                        }else if(double.tryParse(value)<=0){
+                          return "Weight cannot be 0 or less";
                         }else{
                           setState(() {
                             data['weight']=value;
@@ -342,6 +349,7 @@ class _HomeState extends State<Home> {
 
                         errorStyle: TextStyle(
                           height: 0,
+                          fontSize: 15
                         ),
 
                         labelText: "Height in ${heights[dropDropValue]}",
@@ -359,10 +367,13 @@ class _HomeState extends State<Home> {
                       ),
 
                       validator: (value){
-                        if(value.isEmpty || double.tryParse(value)<=0){
+                        if(value.isEmpty){
                           data.remove('height');
-                          return "";
-                        }else{
+                          return "Height is required";
+                        }else if(double.tryParse(value)<=0){
+                          return "Height cannot be 0 or less";
+                        }
+                        else{
                           setState(() {
                             data['height']=value;
                           });
